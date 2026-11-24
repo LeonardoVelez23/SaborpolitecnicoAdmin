@@ -1,0 +1,52 @@
+<dialog #dialog class="dialog" aria-labelledby="cobro-titulo" (close)="closed.emit()">
+  <form novalidate (submit)="onSubmit($event)">
+    <h2 id="cobro-titulo">Cobrar pedido #{{ order().id }}</h2>
+
+    <p class="dialog__total">
+      Total a cobrar <strong>{{ total() }}</strong>
+    </p>
+
+    @if (error(); as message) {
+      <p class="banner banner--error" role="alert">{{ message }}</p>
+    }
+
+    <fieldset class="field">
+      <legend>Método de pago</legend>
+      <div class="options">
+        @for (method of methods; track method[0]) {
+          <label class="option">
+            <input type="radio" [value]="method[0]" [formField]="paymentForm.metodo" />
+            {{ method[1] }}
+          </label>
+        }
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label for="referencia">
+        Número de referencia
+        @if (!needsReference()) {
+          <span class="optional">(opcional)</span>
+        }
+      </label>
+      <input
+        id="referencia"
+        type="text"
+        autocomplete="off"
+        [formField]="paymentForm.referencia"
+        [attr.aria-invalid]="paymentForm.referencia().touched() && paymentForm.referencia().invalid()"
+        aria-describedby="referencia-error"
+      />
+      @if (paymentForm.referencia().touched() && paymentForm.referencia().invalid()) {
+        <p id="referencia-error" class="field__error">{{ paymentForm.referencia().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="dialog__actions">
+      <button type="button" class="btn btn--ghost" (click)="close()">Volver</button>
+      <button type="submit" class="btn btn--primary" [disabled]="busy()" [attr.aria-busy]="busy()">
+        {{ busy() ? 'Registrando…' : 'Registrar pago' }}
+      </button>
+    </div>
+  </form>
+</dialog>

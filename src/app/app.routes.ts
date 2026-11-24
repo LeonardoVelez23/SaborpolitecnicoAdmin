@@ -45,7 +45,7 @@ export const routes: Routes = [
           stage: 'A3',
           description: 'Tablero de pedidos del día con tiempo transcurrido, responsables, cambio de estado, cancelación, pedido asistido y cobro en caja (RF-15 a RF-21, RF-23).',
         },
-        loadComponent: comingSoon,
+        loadComponent: () => import('./features/orders/orders-board').then((m) => m.OrdersBoard),
       },
       {
         path: 'historial',

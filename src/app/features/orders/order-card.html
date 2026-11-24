@@ -1,0 +1,101 @@
+<article
+  [class]="'card card--' + urgency()"
+  [attr.aria-labelledby]="'pedido-' + order().id"
+  [attr.aria-busy]="busy()"
+>
+  <header class="card__head">
+    <h3 [id]="'pedido-' + order().id">#{{ order().id }}</h3>
+    <span class="chip">{{ order().modalidad === 'presencial' ? 'Presencial' : 'En línea' }}</span>
+    <span class="card__time" [attr.title]="order().fecha + ' ' + order().hora">{{ elapsed() }}</span>
+  </header>
+
+  <p class="card__client">{{ clientName() }}</p>
+
+  <ul class="card__lines">
+    @for (line of order().detalles; track line.id) {
+      <li>
+        <span class="qty">{{ line.cantidad }}×</span>
+        {{ line.producto?.nombre ?? 'Producto #' + line.producto_id }}
+      </li>
+    }
+  </ul>
+
+  <div class="card__meta">
+    <span class="card__total">{{ total() }}</span>
+    <span [class]="'badge badge--' + paymentState()">{{ paymentLabel() }}</span>
+  </div>
+
+  <dl class="card__people">
+    <div>
+      <dt>Responsable</dt>
+      <dd>
+        @if (responsible()) {
+          {{ responsible() }}
+        } @else if (canUpdate()) {
+          <button type="button" class="link-button" [disabled]="busy()" (click)="assignMe.emit('empleado_id')">
+            Asignarme
+          </button>
+        } @else {
+          —
+        }
+      </dd>
+    </div>
+    <div>
+      <dt>Preparación</dt>
+      <dd>
+        @if (preparer()) {
+          {{ preparer() }}
+        } @else if (canUpdate()) {
+          <button
+            type="button"
+            class="link-button"
+            [disabled]="busy()"
+            (click)="assignMe.emit('empleado_preparacion_id')"
+          >
+            Asignarme
+          </button>
+        } @else {
+          —
+        }
+      </dd>
+    </div>
+  </dl>
+
+  @if (actions().length || canCharge() || canCancel()) {
+    <div class="card__actions">
+      @if (confirmingCancel()) {
+        <p class="card__confirm" role="alert">¿Cancelar el pedido #{{ order().id }}? Se devuelve el stock.</p>
+        <button type="button" class="btn btn--danger" [disabled]="busy()" (click)="confirmCancel()">
+          Sí, cancelar
+        </button>
+        <button type="button" class="btn btn--ghost" (click)="confirmingCancel.set(false)">No</button>
+      } @else {
+        @for (action of actions(); track action.to; let first = $first) {
+          <button
+            type="button"
+            class="btn"
+            [class.btn--primary]="first"
+            [class.btn--ghost]="!first"
+            [disabled]="busy()"
+            (click)="advance.emit(action)"
+          >
+            {{ busy() && first ? 'Guardando…' : action.label }}
+          </button>
+        }
+        @if (canCharge()) {
+          <button type="button" class="btn btn--ghost" [disabled]="busy()" (click)="charge.emit()">Cobrar</button>
+        }
+        @if (canCancel()) {
+          <button
+            type="button"
+            class="link-button link-button--danger"
+            [disabled]="busy()"
+            (click)="requestCancel()"
+          >
+            Cancelar
+          </button>
+        }
+      }
+    </div>
+  }
+</article>

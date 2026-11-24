@@ -1,0 +1,150 @@
+<dialog #dialog class="dialog" aria-labelledby="asistido-titulo" (close)="closed.emit()">
+  <h2 id="asistido-titulo">Nuevo pedido</h2>
+
+  @if (error(); as message) {
+    <p class="banner banner--error" role="alert">{{ message }}</p>
+  }
+
+  <h3>1. Cliente</h3>
+  <form class="row" novalidate (submit)="search($event)">
+    <div class="field">
+      <label for="cliente-q">Identificación o correo</label>
+      <input
+        id="cliente-q"
+        type="text"
+        autocomplete="off"
+        [value]="query()"
+        (input)="query.set($any($event.target).value)"
+        [attr.aria-invalid]="!!searchError()"
+        aria-describedby="cliente-q-error"
+      />
+    </div>
+    <button type="submit" class="btn btn--ghost" [disabled]="searching()">
+      {{ searching() ? 'Buscando…' : 'Buscar' }}
+    </button>
+  </form>
+  @if (searchError(); as message) {
+    <p id="cliente-q-error" class="field__error" role="alert">{{ message }}</p>
+  }
+
+  @if (client(); as c) {
+    <div class="client" aria-live="polite">
+      <strong>{{ clientName() }}</strong>
+      @switch (c.afiliacion) {
+        @case ('activo') {
+          · Afiliado
+        }
+        @case ('bloqueado') {
+          <p class="field__error">Este cliente está bloqueado en el restaurante; no se le pueden registrar pedidos.</p>
+        }
+        @case ('retirado') {
+          · Retiró su afiliación
+        }
+        @default {
+          · Sin afiliación
+        }
+      }
+    </div>
+    @if (needsConsent()) {
+      <label class="check">
+        <input type="checkbox" [checked]="consent()" (change)="consent.set($any($event.target).checked)" />
+        El cliente aceptó en persona compartir sus datos con el restaurante.
+      </label>
+    }
+  }
+
+  <h3>2. Productos</h3>
+  @if (productsError(); as message) {
+    <p class="banner banner--error" role="alert">{{ message }}</p>
+  }
+  <div class="row">
+    <div class="field">
+      <label for="producto">Producto</label>
+      <select id="producto" [value]="selectedProductId() ?? ''" (change)="onProduct($any($event.target).value)">
+        <option value="">{{ productsLoading() ? 'Cargando productos…' : 'Elige un producto' }}</option>
+        @for (p of available(); track p.id) {
+          <option [value]="p.id">{{ p.nombre }} · {{ formatMoney(p.precio) }} ({{ p.cantidad_disponible }})</option>
+        }
+      </select>
+    </div>
+    <div class="field field--qty">
+      <label for="cantidad">Cantidad</label>
+      <input
+        id="cantidad"
+        type="number"
+        inputmode="numeric"
+        [value]="qty()"
+        (input)="onQty($any($event.target).value)"
+      />
+    </div>
+    <button
+      type="button"
+      class="btn btn--ghost"
+      [disabled]="!selectedProductId() || qty() < 1 || qty() > maxSelected()"
+      (click)="addLine()"
+    >
+      Agregar
+    </button>
+  </div>
+  @if (selectedProductId() && qty() > maxSelected()) {
+    <p class="field__error">Máximo {{ maxSelected() }} unidades más de este producto.</p>
+  }
+
+  @if (lines().length) {
+    <ul class="lines" aria-label="Productos del pedido">
+      @for (line of lines(); track line.product.id) {
+        <li>
+          <span>{{ line.cantidad }}× {{ line.product.nombre }}</span>
+          <span>{{ formatMoney(line.product.precio * line.cantidad) }}</span>
+          <button
+            type="button"
+            class="link-button link-button--danger"
+            [attr.aria-label]="'Quitar ' + line.product.nombre"
+            (click)="removeLine(line.product.id)"
+          >
+            Quitar
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="optional">Aún no hay productos.</p>
+  }
+
+  <form novalidate (submit)="submit($event)">
+    <fieldset class="field">
+      <legend>3. Modalidad</legend>
+      <div class="options">
+        <label class="option">
+          <input
+            type="radio"
+            name="modalidad"
+            [checked]="modalidad() === 'presencial'"
+            (change)="modalidad.set('presencial')"
+          />
+          Presencial
+        </label>
+        <label class="option">
+          <input
+            type="radio"
+            name="modalidad"
+            [checked]="modalidad() === 'en línea'"
+            (change)="modalidad.set('en línea')"
+          />
+          En línea
+        </label>
+      </div>
+    </fieldset>
+
+    <p class="dialog__total">
+      Total estimado <strong>{{ total() }}</strong>
+    </p>
+
+    <div class="dialog__actions">
+      <button type="button" class="btn btn--ghost" (click)="close()">Cancelar</button>
+      <button type="submit" class="btn btn--primary" [disabled]="!canSubmit()" [attr.aria-busy]="busy()">
+        {{ busy() ? 'Creando…' : 'Crear pedido' }}
+      </button>
+    </div>
+  </form>
+</dialog>

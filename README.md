@@ -46,7 +46,7 @@ src/app/
 | Etapa | Contenido | Estado |
 |---|---|---|
 | A0–A2 | Proyecto, tokens, sesión del personal, login, recuperar contraseña, shell con menú por rol | Hecho (24-11-2026) |
-| A3 | Pedidos: tablero, estados, responsables, cancelación, pedido asistido y cobro en caja (RN-14: referencia obligatoria con tarjeta o transferencia; estado `reembolsado`) | Pendiente |
+| A3 | Pedidos: tablero, estados, responsables, cancelación, pedido asistido y cobro en caja (RN-14: referencia obligatoria con tarjeta o transferencia; estado `reembolsado`) | Hecho (24-11-2026); la búsqueda de clientes necesita el backend con la etapa 8 desplegada |
 | A4 | Productos y categorías (`imagen_codigo`) | Pendiente |
 | A5 | Dashboard e historial de ventas | Pendiente |
 | A6 | Usuarios (empleados; clientes afiliados con búsqueda exacta, afiliación presencial y bloqueo) y Mi perfil | Pendiente |

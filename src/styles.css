@@ -160,6 +160,21 @@ input[aria-invalid='true'] {
   width: 100%;
 }
 
+.btn--ghost {
+  background: transparent;
+  border-color: var(--sh-border);
+  color: var(--sh-text-primary);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--sh-bg-tertiary);
+}
+
+.btn--danger {
+  background: var(--sh-danger);
+  color: #fff;
+}
+
 .link-button {
   padding: 0.25rem;
   border: 0;
@@ -169,6 +184,15 @@ input[aria-invalid='true'] {
   font-weight: 500;
   cursor: pointer;
   text-decoration: underline;
+}
+
+.link-button--danger {
+  color: var(--sh-danger);
+}
+
+.link-button:disabled {
+  color: var(--sh-disabled-text);
+  cursor: not-allowed;
 }
 
 /* Avisos */

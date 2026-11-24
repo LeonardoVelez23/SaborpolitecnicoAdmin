@@ -1,0 +1,122 @@
+.dialog {
+  width: min(560px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 1.5rem;
+  border: 1px solid var(--sh-border);
+  border-radius: var(--sh-radius-lg);
+  background: var(--sh-bg-secondary);
+  color: var(--sh-text-primary);
+  box-shadow: var(--sh-shadow);
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 40%);
+}
+
+h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+.dialog__total {
+  margin: 0 0 1rem;
+}
+
+.dialog__total strong {
+  color: var(--sh-highlight-text);
+  font-size: 1.25rem;
+}
+
+fieldset.field {
+  border: 0;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+legend {
+  margin-bottom: 0.375rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  cursor: pointer;
+}
+
+.option input,
+.check input {
+  width: auto;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.optional {
+  color: var(--sh-text-secondary);
+  font-weight: 400;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.row > .field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.row > .field--qty {
+  flex: 0 0 6rem;
+}
+
+.lines {
+  margin: 0.75rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lines li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid var(--sh-border);
+}
+
+.lines li span:first-child {
+  flex: 1;
+}
+
+.client {
+  margin: 0.5rem 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--sh-radius-sm);
+  background: var(--sh-bg-tertiary);
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}

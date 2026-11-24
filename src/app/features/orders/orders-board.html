@@ -1,0 +1,97 @@
+<div class="toolbar">
+  <div class="segmented" role="group" aria-label="Pedidos a mostrar">
+    <button type="button" [attr.aria-pressed]="onlyToday()" (click)="onlyToday.set(true)">Hoy</button>
+    <button type="button" [attr.aria-pressed]="!onlyToday()" (click)="onlyToday.set(false)">Todos</button>
+  </div>
+  @if (updatedAgo()) {
+    <span class="toolbar__updated">Actualizado {{ updatedAgo() }}</span>
+  }
+  <button type="button" class="btn btn--ghost" [disabled]="loading()" (click)="load()">Actualizar</button>
+  @if (canCreate()) {
+    <button type="button" class="btn btn--primary toolbar__new" (click)="creating.set(true)">+ Nuevo pedido</button>
+  }
+</div>
+
+@if (error(); as message) {
+  <div class="banner banner--error" role="alert">
+    {{ message }}
+    <button type="button" class="link-button" (click)="load()">Reintentar</button>
+  </div>
+}
+
+@if (loading() && !lastUpdate()) {
+  <p class="empty" role="status">Cargando pedidos…</p>
+} @else {
+  <div class="board">
+    @for (column of columns(); track column.status) {
+      <section class="column" [attr.aria-labelledby]="'col-' + $index">
+        <h2 [id]="'col-' + $index">
+          {{ column.label }} <span class="count">{{ column.orders.length }}</span>
+        </h2>
+        @for (order of column.orders; track order.id) {
+          <sh-order-card
+            [order]="order"
+            [payment]="paymentFor(order)"
+            [role]="role()"
+            [now]="now()"
+            [busy]="busyId() === order.id"
+            (advance)="advance(order, $event)"
+            (cancel)="cancel(order)"
+            (charge)="charging.set(order)"
+            (assignMe)="assignMe(order, $event)"
+          />
+        } @empty {
+          <p class="empty">Sin pedidos.</p>
+        }
+      </section>
+    }
+  </div>
+
+  <section class="finished" aria-labelledby="finalizados">
+    <h2 id="finalizados">
+      <button
+        type="button"
+        class="finished__toggle"
+        [attr.aria-expanded]="showFinished()"
+        (click)="showFinished.set(!showFinished())"
+      >
+        Finalizados <span class="count">{{ finished().length }}</span>
+      </button>
+    </h2>
+    @if (showFinished()) {
+      @if (finished().length) {
+        <div class="finished__grid">
+          @for (order of finished(); track order.id) {
+            <sh-order-card
+              [order]="order"
+              [payment]="paymentFor(order)"
+              [role]="role()"
+              [now]="now()"
+              [busy]="busyId() === order.id"
+              (charge)="charging.set(order)"
+            />
+          }
+        </div>
+      } @else {
+        <p class="empty">Sin pedidos finalizados.</p>
+      }
+    }
+  </section>
+}
+
+@if (charging(); as order) {
+  <sh-payment-dialog
+    [order]="order"
+    [payment]="paymentFor(order)"
+    (paid)="onPaid($event)"
+    (closed)="charging.set(undefined)"
+  />
+}
+
+@if (creating()) {
+  <sh-assisted-order-dialog
+    [sucursalId]="user().sucursal_id"
+    (created)="onCreated($event)"
+    (closed)="creating.set(false)"
+  />
+}
