@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://restaurantespambackend-production.up.railway.app",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "warn"
+  }
+}

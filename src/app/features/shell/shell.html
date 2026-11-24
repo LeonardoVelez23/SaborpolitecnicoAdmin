@@ -1,0 +1,61 @@
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<div class="shell" [class.shell--menu-open]="menuOpen()">
+  <nav id="menu-principal" class="sidebar" aria-label="Menú principal">
+    <div class="sidebar__logo">
+      <img src="logo.jpg" alt="SaborHub" width="180" height="100" />
+    </div>
+    <ul class="sidebar__list">
+      @for (item of menu(); track item.path) {
+        <li>
+          <a [routerLink]="item.path" routerLinkActive="is-active" ariaCurrentWhenActive="page" (click)="closeMenu()">{{
+            item.label
+          }}</a>
+        </li>
+      }
+    </ul>
+    <ul class="sidebar__list sidebar__list--bottom">
+      <li>
+        <a
+          [routerLink]="profileItem.path"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+          (click)="closeMenu()"
+          >{{ profileItem.label }}</a
+        >
+      </li>
+      <li>
+        <button type="button" class="sidebar__logout" (click)="logout()">Salir</button>
+      </li>
+    </ul>
+  </nav>
+
+  @if (menuOpen()) {
+    <div class="backdrop" aria-hidden="true" (click)="closeMenu()"></div>
+  }
+
+  <div class="main">
+    <header class="topbar">
+      <button
+        type="button"
+        class="topbar__menu"
+        aria-controls="menu-principal"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Abrir menú"
+        (click)="toggleMenu()"
+      >
+        ☰
+      </button>
+      <h1 class="topbar__title">{{ sectionTitle() }}</h1>
+      @if (user(); as u) {
+        <p class="topbar__user">
+          <span class="topbar__name">{{ u.nombres }} {{ u.apellidos }}</span>
+          <span class="topbar__role">{{ roleLabel() }}</span>
+        </p>
+      }
+    </header>
+    <main id="contenido" class="content" tabindex="-1">
+      <router-outlet />
+    </main>
+  </div>
+</div>

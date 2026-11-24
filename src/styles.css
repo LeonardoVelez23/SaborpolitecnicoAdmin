@@ -1,0 +1,201 @@
+/*
+ * Tokens de marca SaborHub (paleta 60/30/10), los mismos de la app móvil.
+ * Especificación: ../SaborPolitecnico App/docs/design/paleta.md y docs/design/shell-y-sesion.md.
+ * No usar colores sueltos en los componentes: usar estas variables.
+ */
+:root {
+  color-scheme: light;
+  --sh-bg-primary: #eee2cb;
+  --sh-bg-secondary: #f8f2e6;
+  --sh-bg-tertiary: #e3d3b4;
+  --sh-accent: #1b4532;
+  --sh-on-accent: #f8f2e6;
+  --sh-accent-light: #2f6b4d;
+  --sh-accent-muted: rgb(27 69 50 / 10%);
+  --sh-highlight: #ee4129;
+  --sh-on-highlight: #ffffff;
+  --sh-highlight-text: #b12a16;
+  --sh-text-primary: #1f2a24;
+  --sh-text-secondary: #4b5a50;
+  --sh-text-muted: #5a6559;
+  --sh-border: #cdbb97;
+  --sh-success: #2d7a4c;
+  --sh-warning: #9a5b00;
+  --sh-danger: #9f1d1d;
+  --sh-info: #2a65a8;
+  --sh-success-muted: rgb(45 122 76 / 10%);
+  --sh-danger-muted: rgb(159 29 29 / 10%);
+  --sh-info-muted: rgb(42 101 168 / 10%);
+  --sh-disabled-bg: #ddd1ba;
+  --sh-disabled-text: #625b4c;
+  /* El logo es un JPG con fondo blanco: va sobre blanco también en oscuro. */
+  --sh-logo-bg: #ffffff;
+  --sh-shadow: 0 1px 2px rgb(31 42 36 / 8%), 0 4px 12px rgb(31 42 36 / 6%);
+  --sh-radius-sm: 8px;
+  --sh-radius-md: 12px;
+  --sh-radius-lg: 16px;
+  --sh-font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --sh-bg-primary: #0e1c15;
+    --sh-bg-secondary: #15281e;
+    --sh-bg-tertiary: #1f3629;
+    --sh-accent: #eee2cb;
+    --sh-on-accent: #1b4532;
+    --sh-accent-light: #a9c7b5;
+    --sh-accent-muted: rgb(238 226 203 / 16%);
+    --sh-highlight: #f2553d;
+    --sh-on-highlight: #0e1c15;
+    --sh-highlight-text: #ff8470;
+    --sh-text-primary: #f1e9da;
+    --sh-text-secondary: #c4bba8;
+    --sh-text-muted: #a39b88;
+    --sh-border: #35503f;
+    --sh-success: #6cc795;
+    --sh-warning: #f2b65a;
+    --sh-danger: #ff9a90;
+    --sh-info: #8bbceb;
+    --sh-success-muted: rgb(108 199 149 / 15%);
+    --sh-danger-muted: rgb(255 154 144 / 15%);
+    --sh-info-muted: rgb(139 188 235 / 15%);
+    --sh-disabled-bg: #2c4436;
+    --sh-disabled-text: #9a9484;
+    --sh-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 12px rgb(0 0 0 / 25%);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--sh-bg-primary);
+  color: var(--sh-text-primary);
+  font-family: var(--sh-font);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--sh-accent);
+  font-weight: 500;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sh-accent);
+  outline-offset: 2px;
+}
+
+/* Formularios */
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--sh-border);
+  border-radius: var(--sh-radius-sm);
+  background: var(--sh-bg-secondary);
+  color: var(--sh-text-primary);
+  font: inherit;
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--sh-danger);
+}
+
+.field__error {
+  margin: 0.375rem 0 0;
+  color: var(--sh-danger);
+  font-size: 0.875rem;
+}
+
+/* Botones */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.125rem;
+  border: 1px solid transparent;
+  border-radius: var(--sh-radius-sm);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: var(--sh-accent);
+  color: var(--sh-on-accent);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--sh-accent-light);
+}
+
+.btn:disabled {
+  background: var(--sh-disabled-bg);
+  color: var(--sh-disabled-text);
+  cursor: not-allowed;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.link-button {
+  padding: 0.25rem;
+  border: 0;
+  background: transparent;
+  color: var(--sh-accent);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Avisos */
+.banner {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--sh-radius-sm);
+  border: 1px solid transparent;
+}
+
+.banner--error {
+  background: var(--sh-danger-muted);
+  border-color: var(--sh-danger);
+  color: var(--sh-danger);
+}
+
+.banner--info {
+  background: var(--sh-info-muted);
+  border-color: var(--sh-info);
+  color: var(--sh-text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
