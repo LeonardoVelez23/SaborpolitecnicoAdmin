@@ -41,18 +41,28 @@ export class OrderCard {
 
   protected readonly minutes = computed(() => elapsedMinutes(this.order(), this.now()));
   protected readonly elapsed = computed(() => formatElapsed(this.minutes()));
-  protected readonly urgency = computed(() => (isFinal(this.order().estado) ? 'normal' : urgency(this.minutes())));
-  protected readonly clientName = computed(() => personName(this.order().cliente) || `Cliente #${this.order().cliente_id}`);
+  protected readonly urgency = computed(() =>
+    isFinal(this.order().estado) ? 'normal' : urgency(this.minutes()),
+  );
+  protected readonly clientName = computed(
+    () => personName(this.order().cliente) || `Cliente #${this.order().cliente_id}`,
+  );
   protected readonly responsible = computed(() => personName(this.order().empleadoResponsable));
   protected readonly preparer = computed(() => personName(this.order().empleadoPreparacion));
   protected readonly total = computed(() => formatMoney(this.order().valor_total));
   protected readonly paymentState = computed(() => this.payment()?.estado ?? 'none');
   protected readonly paymentLabel = computed(() => PAYMENT_LABELS[this.paymentState()]);
 
-  protected readonly canUpdate = computed(() => canUpdateOrders(this.role()) && !isFinal(this.order().estado));
-  protected readonly actions = computed(() => (this.canUpdate() ? nextActions(this.order().estado) : []));
+  protected readonly canUpdate = computed(
+    () => canUpdateOrders(this.role()) && !isFinal(this.order().estado),
+  );
+  protected readonly actions = computed(() =>
+    this.canUpdate() ? nextActions(this.order().estado) : [],
+  );
   protected readonly canCancel = computed(() => canCancel(this.order(), this.role()));
-  protected readonly canCharge = computed(() => canChargeOrder(this.order(), this.payment(), this.role()));
+  protected readonly canCharge = computed(() =>
+    canChargeOrder(this.order(), this.payment(), this.role()),
+  );
 
   protected requestCancel(): void {
     this.confirmingCancel.set(true);

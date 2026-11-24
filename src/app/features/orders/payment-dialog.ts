@@ -42,7 +42,10 @@ export class PaymentDialog {
     required(path.metodo);
     validate(path.referencia, ({ value, valueOf }) =>
       referenceRequired(valueOf(path.metodo)) && !value().trim()
-        ? { kind: 'reference', message: 'Con tarjeta o transferencia el número de referencia es obligatorio.' }
+        ? {
+            kind: 'reference',
+            message: 'Con tarjeta o transferencia el número de referencia es obligatorio.',
+          }
         : undefined,
     );
   });

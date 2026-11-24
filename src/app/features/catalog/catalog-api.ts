@@ -72,7 +72,9 @@ export class CatalogApi {
   }
 
   renameCategory(id: number, nombre: string): Promise<Category> {
-    return data(this.http.put<ApiResponse<Category>>(`${this.baseUrl}/categorias/${id}`, { nombre }));
+    return data(
+      this.http.put<ApiResponse<Category>>(`${this.baseUrl}/categorias/${id}`, { nombre }),
+    );
   }
 
   deleteCategory(id: number): Promise<void> {

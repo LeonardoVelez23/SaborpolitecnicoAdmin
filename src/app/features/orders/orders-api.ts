@@ -3,7 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
 import { API_BASE_URL, ApiResponse } from '../../core/api/api';
 
-export type OrderStatus = 'solicitado' | 'confirmado' | 'en preparación' | 'listo' | 'entregado' | 'cancelado';
+export type OrderStatus =
+  'solicitado' | 'confirmado' | 'en preparación' | 'listo' | 'entregado' | 'cancelado';
 export type Modality = 'presencial' | 'en línea';
 export type PaymentMethod = 'efectivo' | 'tarjeta' | 'transferencia';
 export type PaymentStatus = 'pendiente' | 'aprobado' | 'rechazado' | 'reembolsado';
@@ -138,7 +139,9 @@ export class OrdersApi {
   /** Busca un cliente por identificación o correo exactos (RF-44). 404 si no existe. */
   findClient(query: string): Promise<ClientMatch> {
     const params = new HttpParams().set('q', query.trim());
-    return data(this.http.get<ApiResponse<ClientMatch>>(`${this.baseUrl}/clientes/buscar`, { params }));
+    return data(
+      this.http.get<ApiResponse<ClientMatch>>(`${this.baseUrl}/clientes/buscar`, { params }),
+    );
   }
 
   createAssistedOrder(input: AssistedOrderInput): Promise<Order> {

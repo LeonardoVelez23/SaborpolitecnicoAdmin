@@ -73,8 +73,5 @@ export function roundPrice(value: number): number {
 
 /** Minúsculas sin tildes (la ñ queda como n). */
 function normalize(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase();
+  return value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }

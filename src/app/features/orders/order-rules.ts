@@ -1,12 +1,24 @@
 import { StaffRole } from '../../core/auth/roles';
-import { Order, OrderStatus, OrderUpdate, Payment, PaymentMethod, PaymentStatus } from './orders-api';
+import {
+  Order,
+  OrderStatus,
+  OrderUpdate,
+  Payment,
+  PaymentMethod,
+  PaymentStatus,
+} from './orders-api';
 
 /**
  * Reglas del tablero, puras y probadas. Reflejan las de la API (RN-01 a RN-04,
  * RN-10, RN-14): el panel solo ofrece lo que el backend va a aceptar.
  */
 
-export const ACTIVE_STATUSES: readonly OrderStatus[] = ['solicitado', 'confirmado', 'en preparación', 'listo'];
+export const ACTIVE_STATUSES: readonly OrderStatus[] = [
+  'solicitado',
+  'confirmado',
+  'en preparación',
+  'listo',
+];
 export const FINAL_STATUSES: readonly OrderStatus[] = ['entregado', 'cancelado'];
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
@@ -84,7 +96,11 @@ export function nextActions(status: OrderStatus): StatusAction[] {
  * responsable (RN-02): si no tiene, queda quien lo avanza. Al pasar a
  * preparación, un cocinero sin preparador asignado queda como preparador.
  */
-export function advanceChanges(order: Order, to: OrderStatus, me: { id: number; rol: StaffRole }): OrderUpdate {
+export function advanceChanges(
+  order: Order,
+  to: OrderStatus,
+  me: { id: number; rol: StaffRole },
+): OrderUpdate {
   const changes: OrderUpdate = { estado: to };
   if (to !== 'cancelado' && order.empleado_id === null) changes.empleado_id = me.id;
   if (to === 'en preparación' && order.empleado_preparacion_id === null && me.rol === 'cocinero') {
@@ -98,7 +114,11 @@ export function canCancel(order: Order, role: StaffRole): boolean {
 }
 
 /** Se cobra en caja desde confirmado, nunca cancelado, si no hay pago aprobado o reembolsado (RN-10). */
-export function canChargeOrder(order: Order, payment: Payment | undefined, role: StaffRole): boolean {
+export function canChargeOrder(
+  order: Order,
+  payment: Payment | undefined,
+  role: StaffRole,
+): boolean {
   if (!canCharge(role)) return false;
   if (order.estado === 'solicitado' || order.estado === 'cancelado') return false;
   return !payment || payment.estado === 'pendiente' || payment.estado === 'rechazado';
@@ -111,7 +131,12 @@ export function referenceRequired(method: PaymentMethod): boolean {
 
 /** Fecha de hoy (AAAA-MM-DD) en la zona del restaurante. */
 export function todayIn(timeZone = 'America/Guayaquil', now = new Date()): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now);
 }
 
 /** Minutos desde que se creó el pedido. */
@@ -137,7 +162,9 @@ export function urgency(minutes: number): 'normal' | 'warning' | 'danger' {
   return 'normal';
 }
 
-export function personName(person: { nombres?: string; apellidos?: string } | null | undefined): string {
+export function personName(
+  person: { nombres?: string; apellidos?: string } | null | undefined,
+): string {
   if (!person) return '';
   return [person.nombres, person.apellidos].filter(Boolean).join(' ');
 }
