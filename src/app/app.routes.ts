@@ -69,7 +69,7 @@ export const routes: Routes = [
           stage: 'A4',
           description: 'Catálogo de la sucursal: categorías y productos con precio, stock, estado e imagen_codigo (RF-09 a RF-11).',
         },
-        loadComponent: comingSoon,
+        loadComponent: () => import('./features/catalog/catalog-page').then((m) => m.CatalogPage),
       },
       {
         path: 'usuarios',

@@ -68,7 +68,10 @@ describe('Login', () => {
     const { fixture, el } = await submit('laura@example.com', 'mala');
     backend
       .expectOne(`${API}/auth/login`)
-      .flush({ success: false, message: 'Credenciales inválidas' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { success: false, message: 'Credenciales inválidas' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
     await vi.waitFor(async () => {
       await fixture.whenStable();
       expect(el.textContent).toContain('Credenciales inválidas');

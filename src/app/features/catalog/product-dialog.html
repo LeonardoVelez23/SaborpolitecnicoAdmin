@@ -1,0 +1,123 @@
+<dialog #dialog class="dialog" aria-labelledby="producto-titulo" (close)="closed.emit()">
+  <form novalidate (submit)="onSubmit($event)">
+    <h2 id="producto-titulo">{{ product() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+
+    @if (error(); as message) {
+      <p class="banner banner--error" role="alert">{{ message }}</p>
+    }
+
+    <div class="grid">
+      <div class="field">
+        <label for="p-codigo">Código</label>
+        <input id="p-codigo" type="text" autocomplete="off" [formField]="productForm.codigo" />
+        @if (productForm.codigo().touched() && productForm.codigo().invalid()) {
+          <p class="field__error">{{ productForm.codigo().errors()[0]?.message }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="p-categoria">Categoría</label>
+        <select id="p-categoria" [formField]="productForm.categoria">
+          <option value="">Elige una categoría</option>
+          @for (c of categories(); track c.id) {
+            <option [value]="c.id">{{ c.nombre }}</option>
+          }
+        </select>
+        @if (productForm.categoria().touched() && productForm.categoria().invalid()) {
+          <p class="field__error">{{ productForm.categoria().errors()[0]?.message }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="p-nombre">Nombre</label>
+      <input id="p-nombre" type="text" autocomplete="off" [formField]="productForm.nombre" />
+      @if (productForm.nombre().touched() && productForm.nombre().invalid()) {
+        <p class="field__error">{{ productForm.nombre().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="p-descripcion">Descripción <span class="optional">(opcional)</span></label>
+      <textarea id="p-descripcion" rows="3" [formField]="productForm.descripcion"></textarea>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label for="p-precio">Precio (USD)</label>
+        <input
+          id="p-precio"
+          type="number"
+          step="0.01"
+          inputmode="decimal"
+          [formField]="productForm.precio"
+        />
+        @if (productForm.precio().touched() && productForm.precio().invalid()) {
+          <p class="field__error">{{ productForm.precio().errors()[0]?.message }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="p-cantidad">Cantidad disponible</label>
+        <input
+          id="p-cantidad"
+          type="number"
+          step="1"
+          inputmode="numeric"
+          [formField]="productForm.cantidad"
+        />
+        @if (productForm.cantidad().touched() && productForm.cantidad().invalid()) {
+          <p class="field__error">{{ productForm.cantidad().errors()[0]?.message }}</p>
+        }
+      </div>
+    </div>
+
+    <fieldset class="field">
+      <legend>Estado</legend>
+      <div class="options">
+        <label class="option">
+          <input type="radio" value="disponible" [formField]="productForm.estado" />
+          Disponible
+        </label>
+        <label class="option">
+          <input type="radio" value="no disponible" [formField]="productForm.estado" />
+          No disponible
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label for="p-imagen">Código de imagen <span class="optional">(opcional)</span></label>
+      <div class="row">
+        <input
+          id="p-imagen"
+          type="text"
+          autocomplete="off"
+          aria-describedby="p-imagen-ayuda"
+          [formField]="productForm.imagen"
+        />
+        <button
+          type="button"
+          class="btn btn--ghost"
+          [disabled]="!model().nombre.trim()"
+          (click)="generateImageCode()"
+        >
+          Generar del nombre
+        </button>
+      </div>
+      <p id="p-imagen-ayuda" class="optional hint">
+        Nombre del archivo WebP de la app (assets/images/productos/&lt;código&gt;.webp).
+      </p>
+      @if (productForm.imagen().touched() && productForm.imagen().invalid()) {
+        <p class="field__error">{{ productForm.imagen().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="dialog__actions">
+      <button type="button" class="btn btn--ghost" (click)="close()">Cancelar</button>
+      <button type="submit" class="btn btn--primary" [disabled]="busy()" [attr.aria-busy]="busy()">
+        {{ busy() ? 'Guardando…' : product() ? 'Guardar cambios' : 'Crear producto' }}
+      </button>
+    </div>
+  </form>
+</dialog>

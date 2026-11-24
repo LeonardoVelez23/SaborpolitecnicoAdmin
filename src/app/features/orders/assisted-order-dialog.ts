@@ -27,7 +27,7 @@ const MAX_QTY = 50;
   selector: 'sh-assisted-order-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './assisted-order-dialog.html',
-  styleUrl: './dialog.css',
+  styleUrl: '../../core/ui/dialog.css',
 })
 export class AssistedOrderDialog {
   private readonly api = inject(OrdersApi);
@@ -161,7 +161,9 @@ export class AssistedOrderDialog {
     } catch (e) {
       if (e instanceof HttpErrorResponse && e.error?.codigo === 'afiliacion_requerida') {
         this.client.update((c) => (c ? { ...c, afiliacion: null } : c));
-        this.error.set('El cliente no está afiliado a este restaurante: confirma su consentimiento presencial.');
+        this.error.set(
+          'El cliente no está afiliado a este restaurante: confirma su consentimiento presencial.',
+        );
       } else {
         this.error.set(errorMessage(e));
       }

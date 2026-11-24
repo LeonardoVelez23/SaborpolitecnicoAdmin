@@ -1,0 +1,276 @@
+@if (!ownBranch()) {
+  <div class="field branch">
+    <label for="sucursal">Sucursal</label>
+    <select
+      id="sucursal"
+      [value]="chosenBranch() ?? ''"
+      (change)="chooseBranch($any($event.target).value)"
+    >
+      <option value="">Elige una sucursal</option>
+      @for (b of branches(); track b.id) {
+        <option [value]="b.id">
+          {{ b.restaurante?.nombre ? b.restaurante?.nombre + ' · ' : '' }}{{ b.nombre }}
+        </option>
+      }
+    </select>
+  </div>
+}
+
+@if (error(); as message) {
+  <div class="banner banner--error" role="alert">
+    {{ message }}
+    <button type="button" class="link-button" (click)="load()">Reintentar</button>
+  </div>
+}
+
+@if (!branchId()) {
+  <p class="empty">Elige una sucursal para ver su catálogo.</p>
+} @else if (loading() && !loaded()) {
+  <p class="empty" role="status">Cargando catálogo…</p>
+} @else if (loaded()) {
+  <div class="layout">
+    <section class="panel categories" aria-labelledby="categorias-titulo">
+      <h2 id="categorias-titulo">Categorías</h2>
+      <ul>
+        <li>
+          <button
+            type="button"
+            class="category"
+            [class.is-active]="categoryId() === null"
+            [attr.aria-pressed]="categoryId() === null"
+            (click)="categoryId.set(null)"
+          >
+            Todas <span class="count">{{ products().length }}</span>
+          </button>
+        </li>
+        @for (c of categories(); track c.id) {
+          <li>
+            @if (editingCategory() === c.id) {
+              <input
+                class="rename"
+                type="text"
+                [attr.aria-label]="'Nuevo nombre de ' + c.nombre"
+                [value]="categoryDraft()"
+                [disabled]="isBusy('category', c.id)"
+                (input)="categoryDraft.set($any($event.target).value)"
+                (keydown)="onRenameKey($event, c)"
+                (blur)="saveRename(c)"
+              />
+            } @else if (isConfirming('category', c.id)) {
+              <span class="confirm" role="alert">¿Eliminar "{{ c.nombre }}"?</span>
+              <button
+                type="button"
+                class="link-button link-button--danger"
+                (click)="deleteCategory(c)"
+              >
+                Sí
+              </button>
+              <button type="button" class="link-button" (click)="confirming.set(undefined)">
+                No
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="category"
+                [class.is-active]="categoryId() === c.id"
+                [attr.aria-pressed]="categoryId() === c.id"
+                (click)="categoryId.set(c.id)"
+              >
+                {{ c.nombre }} <span class="count">{{ counts().get(c.id) ?? 0 }}</span>
+              </button>
+              <button
+                type="button"
+                class="icon-button"
+                [attr.aria-label]="'Renombrar ' + c.nombre"
+                [disabled]="isBusy('category', c.id)"
+                (click)="startRename(c)"
+              >
+                ✎
+              </button>
+              @if (canDelete()) {
+                <button
+                  type="button"
+                  class="icon-button icon-button--danger"
+                  [attr.aria-label]="'Eliminar ' + c.nombre"
+                  [disabled]="isBusy('category', c.id)"
+                  (click)="confirming.set({ kind: 'category', id: c.id })"
+                >
+                  🗑
+                </button>
+              }
+            }
+          </li>
+        }
+      </ul>
+      <form class="new-category" novalidate (submit)="addCategory($event)">
+        <label class="sr-only" for="nueva-categoria">Nueva categoría</label>
+        <input
+          id="nueva-categoria"
+          type="text"
+          placeholder="Nueva categoría"
+          autocomplete="off"
+          [value]="newCategory()"
+          (input)="newCategory.set($any($event.target).value)"
+        />
+        <button
+          type="submit"
+          class="btn btn--ghost"
+          [disabled]="!newCategory().trim() || busy() === 'new-category'"
+        >
+          Agregar
+        </button>
+      </form>
+    </section>
+
+    <section class="panel products" aria-labelledby="productos-titulo">
+      <div class="products__head">
+        <h2 id="productos-titulo">Productos</h2>
+        <button
+          type="button"
+          class="btn btn--primary"
+          [disabled]="!categories().length"
+          (click)="creating.set(true)"
+        >
+          + Nuevo producto
+        </button>
+      </div>
+      @if (!categories().length) {
+        <p class="banner banner--info">Crea una categoría antes de agregar productos.</p>
+      }
+
+      <div class="filters">
+        <div class="field">
+          <label for="buscar">Buscar</label>
+          <input
+            id="buscar"
+            type="search"
+            placeholder="Nombre o código"
+            [value]="text()"
+            (input)="text.set($any($event.target).value)"
+          />
+        </div>
+        <div class="field">
+          <label for="estado">Estado</label>
+          <select id="estado" [value]="status()" (change)="status.set($any($event.target).value)">
+            @for (f of statusFilters; track f.value) {
+              <option [value]="f.value">{{ f.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (filtered().length) {
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only">
+              Productos de la sucursal
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Código</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Categoría</th>
+                <th scope="col" class="num">Precio</th>
+                <th scope="col" class="num">Stock</th>
+                <th scope="col">Estado</th>
+                <th scope="col"><span class="sr-only">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of filtered(); track p.id) {
+                <tr [attr.aria-busy]="isBusy('product', p.id)">
+                  <td class="code">{{ p.codigo }}</td>
+                  <td>
+                    <span class="name">{{ p.nombre }}</span>
+                    @if (p.imagen_codigo) {
+                      <span class="image-code">{{ p.imagen_codigo }}</span>
+                    }
+                  </td>
+                  <td>{{ categoryNames().get(p.categoria_id) ?? p.categoria?.nombre ?? '—' }}</td>
+                  <td class="num">{{ formatMoney(p.precio) }}</td>
+                  <td class="num">
+                    <span [class]="'stock stock--' + stockLevel(p.cantidad_disponible)">
+                      {{ p.cantidad_disponible }}
+                    </span>
+                  </td>
+                  <td>
+                    <span [class]="p.estado === 'disponible' ? 'badge badge--on' : 'badge badge--off'">
+                      {{ p.estado === 'disponible' ? 'Disponible' : 'No disponible' }}
+                    </span>
+                  </td>
+                  <td class="actions">
+                    @if (isConfirming('product', p.id)) {
+                      <span class="confirm" role="alert">¿Eliminar?</span>
+                      <button
+                        type="button"
+                        class="link-button link-button--danger"
+                        (click)="deleteProduct(p)"
+                      >
+                        Sí
+                      </button>
+                      <button type="button" class="link-button" (click)="confirming.set(undefined)">
+                        No
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="link-button"
+                        [attr.aria-label]="'Editar ' + p.nombre"
+                        [disabled]="isBusy('product', p.id)"
+                        (click)="editing.set(p)"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        class="link-button"
+                        [attr.aria-label]="
+                          (p.estado === 'disponible' ? 'Desactivar ' : 'Activar ') + p.nombre
+                        "
+                        [disabled]="isBusy('product', p.id)"
+                        (click)="toggleStatus(p)"
+                      >
+                        {{ p.estado === 'disponible' ? 'Desactivar' : 'Activar' }}
+                      </button>
+                      @if (canDelete()) {
+                        <button
+                          type="button"
+                          class="link-button link-button--danger"
+                          [attr.aria-label]="'Eliminar ' + p.nombre"
+                          [disabled]="isBusy('product', p.id)"
+                          (click)="confirming.set({ kind: 'product', id: p.id })"
+                        >
+                          Eliminar
+                        </button>
+                      }
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="empty">No hay productos con esos filtros.</p>
+      }
+    </section>
+  </div>
+}
+
+@if (creating()) {
+  <sh-product-dialog
+    [categories]="categories()"
+    [sucursalId]="creationBranch()"
+    (saved)="onSaved($event)"
+    (closed)="creating.set(false)"
+  />
+}
+
+@if (editing(); as product) {
+  <sh-product-dialog
+    [product]="product"
+    [categories]="categories()"
+    (saved)="onSaved($event)"
+    (closed)="editing.set(undefined)"
+  />
+}

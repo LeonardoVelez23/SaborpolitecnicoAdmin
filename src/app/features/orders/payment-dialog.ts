@@ -21,7 +21,7 @@ import { Order, OrdersApi, Payment, PaymentMethod } from './orders-api';
   imports: [FormField],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './payment-dialog.html',
-  styleUrl: './dialog.css',
+  styleUrl: '../../core/ui/dialog.css',
 })
 export class PaymentDialog {
   private readonly api = inject(OrdersApi);

@@ -1,5 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { email, form, FormField, maxLength, pattern, required, submit, validate } from '@angular/forms/signals';
+import {
+  email,
+  form,
+  FormField,
+  maxLength,
+  pattern,
+  required,
+  submit,
+  validate,
+} from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { errorMessage } from '../../core/api/api';
 import { AuthApi } from '../../core/auth/auth-api';
@@ -41,7 +50,9 @@ export class RecoverPassword {
       return message ? { kind: 'policy', message } : undefined;
     });
     validate(path.confirm, ({ value, valueOf }) =>
-      value() === valueOf(path.password) ? undefined : { kind: 'mismatch', message: 'Las contraseñas no coinciden.' },
+      value() === valueOf(path.password)
+        ? undefined
+        : { kind: 'mismatch', message: 'Las contraseñas no coinciden.' },
     );
   });
 

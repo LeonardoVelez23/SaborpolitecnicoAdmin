@@ -27,17 +27,23 @@ describe('reglas del tablero de pedidos', () => {
       estado: 'confirmado',
       empleado_id: 5,
     });
-    expect(advanceChanges(order({ empleado_id: 2 }), 'confirmado', { id: 5, rol: 'cajero' })).toEqual({
+    expect(
+      advanceChanges(order({ empleado_id: 2 }), 'confirmado', { id: 5, rol: 'cajero' }),
+    ).toEqual({
       estado: 'confirmado',
     });
   });
 
   it('el cocinero que inicia la preparación queda como preparador', () => {
-    expect(advanceChanges(order({ empleado_id: 2 }), 'en preparación', { id: 9, rol: 'cocinero' })).toEqual({
+    expect(
+      advanceChanges(order({ empleado_id: 2 }), 'en preparación', { id: 9, rol: 'cocinero' }),
+    ).toEqual({
       estado: 'en preparación',
       empleado_preparacion_id: 9,
     });
-    expect(advanceChanges(order({ empleado_id: 2 }), 'en preparación', { id: 5, rol: 'cajero' })).toEqual({
+    expect(
+      advanceChanges(order({ empleado_id: 2 }), 'en preparación', { id: 5, rol: 'cajero' }),
+    ).toEqual({
       estado: 'en preparación',
     });
   });
@@ -56,8 +62,12 @@ describe('reglas del tablero de pedidos', () => {
     expect(canChargeOrder(order(), undefined, 'cajero')).toBe(false);
     expect(canChargeOrder(order({ estado: 'confirmado' }), undefined, 'cajero')).toBe(true);
     expect(canChargeOrder(order({ estado: 'listo' }), payment(), 'cajero')).toBe(true);
-    expect(canChargeOrder(order({ estado: 'listo' }), payment({ estado: 'aprobado' }), 'cajero')).toBe(false);
-    expect(canChargeOrder(order({ estado: 'listo' }), payment({ estado: 'reembolsado' }), 'admin')).toBe(false);
+    expect(
+      canChargeOrder(order({ estado: 'listo' }), payment({ estado: 'aprobado' }), 'cajero'),
+    ).toBe(false);
+    expect(
+      canChargeOrder(order({ estado: 'listo' }), payment({ estado: 'reembolsado' }), 'admin'),
+    ).toBe(false);
     expect(canChargeOrder(order({ estado: 'cancelado' }), undefined, 'admin')).toBe(false);
     expect(canChargeOrder(order({ estado: 'listo' }), undefined, 'cocinero')).toBe(false);
   });

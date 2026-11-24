@@ -22,9 +22,24 @@ describe('guards', () => {
             canActivate: [authGuard],
             children: [
               { path: '', pathMatch: 'full', canActivate: [homeRedirectGuard], children: [] },
-              { path: 'dashboard', canActivate: [roleGuard], data: { roles: ['admin', 'cajero'] }, component: Blank },
-              { path: 'pedidos', canActivate: [roleGuard], data: { roles: ['admin', 'cajero', 'cocinero'] }, component: Blank },
-              { path: 'usuarios', canActivate: [roleGuard], data: { roles: ['admin'] }, component: Blank },
+              {
+                path: 'dashboard',
+                canActivate: [roleGuard],
+                data: { roles: ['admin', 'cajero'] },
+                component: Blank,
+              },
+              {
+                path: 'pedidos',
+                canActivate: [roleGuard],
+                data: { roles: ['admin', 'cajero', 'cocinero'] },
+                component: Blank,
+              },
+              {
+                path: 'usuarios',
+                canActivate: [roleGuard],
+                data: { roles: ['admin'] },
+                component: Blank,
+              },
             ],
           },
         ]),

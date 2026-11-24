@@ -1,10 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { errorMessage } from '../../core/api/api';
 import { SessionStore } from '../../core/auth/session-store';
 import { ToastService } from '../../core/ui/toast.service';
 import { AssistedOrderDialog } from './assisted-order-dialog';
 import { AssignField, OrderCard } from './order-card';
-import { ACTIVE_STATUSES, advanceChanges, canCreateOrders, STATUS_LABELS, StatusAction, todayIn } from './order-rules';
+import {
+  ACTIVE_STATUSES,
+  advanceChanges,
+  canCreateOrders,
+  STATUS_LABELS,
+  StatusAction,
+  todayIn,
+} from './order-rules';
 import { Order, OrdersApi, OrderUpdate, Payment } from './orders-api';
 import { PaymentDialog } from './payment-dialog';
 
@@ -76,7 +90,12 @@ export class OrdersBoard {
     const timer = setInterval(() => {
       this.now.set(Date.now());
       const last = this.lastUpdate();
-      if (document.visibilityState === 'visible' && last && Date.now() - last >= REFRESH_MS && !this.busyId()) {
+      if (
+        document.visibilityState === 'visible' &&
+        last &&
+        Date.now() - last >= REFRESH_MS &&
+        !this.busyId()
+      ) {
         void this.load(true);
       }
     }, TICK_MS);
@@ -116,7 +135,11 @@ export class OrdersBoard {
   }
 
   protected assignMe(order: Order, field: AssignField): Promise<void> {
-    return this.update(order, { [field]: this.user().id }, `Quedaste asignado al pedido #${order.id}.`);
+    return this.update(
+      order,
+      { [field]: this.user().id },
+      `Quedaste asignado al pedido #${order.id}.`,
+    );
   }
 
   protected onPaid(payment: Payment): void {

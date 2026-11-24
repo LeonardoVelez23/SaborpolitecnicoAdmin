@@ -19,7 +19,11 @@ describe('OrdersBoard', () => {
     sessionStorage.clear();
     TestBed.configureTestingModule({
       imports: [OrdersBoard],
-      providers: [provideHttpClient(), provideHttpClientTesting(), { provide: API_BASE_URL, useValue: API }],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: API_BASE_URL, useValue: API },
+      ],
     });
     backend = TestBed.inject(HttpTestingController);
   });
@@ -33,7 +37,8 @@ describe('OrdersBoard', () => {
     return { fixture, el: fixture.nativeElement as HTMLElement };
   }
 
-  const buttons = (el: HTMLElement) => [...el.querySelectorAll('button')].map((b) => b.textContent?.trim());
+  const buttons = (el: HTMLElement) =>
+    [...el.querySelectorAll('button')].map((b) => b.textContent?.trim());
   const today = todayIn();
 
   it('reparte los pedidos de hoy en sus columnas', async () => {
@@ -84,7 +89,10 @@ describe('OrdersBoard', () => {
     const fixture = TestBed.createComponent(OrdersBoard);
     backend
       .expectOne(`${API}/pedidos`)
-      .flush({ success: false, message: 'Fallo del servidor' }, { status: 500, statusText: 'Error' });
+      .flush(
+        { success: false, message: 'Fallo del servidor' },
+        { status: 500, statusText: 'Error' },
+      );
     backend.expectOne(`${API}/pagos`).flush({ success: true, data: [] });
     await fixture.whenStable();
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Fallo del servidor');

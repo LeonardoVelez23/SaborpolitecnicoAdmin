@@ -53,7 +53,9 @@ describe('authInterceptor', () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     session.start(fakeJwt(3600), staffUser());
     const result = firstValueFrom(http.get(`${API}/pedidos`)).catch((e: unknown) => e);
-    backend.expectOne(`${API}/pedidos`).flush({ success: false }, { status: 401, statusText: 'Unauthorized' });
+    backend
+      .expectOne(`${API}/pedidos`)
+      .flush({ success: false }, { status: 401, statusText: 'Unauthorized' });
     await result;
     expect(session.isAuthenticated()).toBe(false);
     expect(session.expired()).toBe(true);
@@ -62,7 +64,9 @@ describe('authInterceptor', () => {
 
   it('un 401 sin sesión (login fallido) no marca vencimiento', async () => {
     const result = firstValueFrom(http.post(`${API}/auth/login`, {})).catch((e: unknown) => e);
-    backend.expectOne(`${API}/auth/login`).flush({ success: false }, { status: 401, statusText: 'Unauthorized' });
+    backend
+      .expectOne(`${API}/auth/login`)
+      .flush({ success: false }, { status: 401, statusText: 'Unauthorized' });
     await result;
     expect(session.expired()).toBe(false);
   });

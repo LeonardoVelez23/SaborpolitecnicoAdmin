@@ -4,7 +4,13 @@ const paths = (rol: Parameters<typeof menuFor>[0]) => menuFor(rol).map((item) =>
 
 describe('roles y menú (RNF-14)', () => {
   it('el admin ve todo el menú', () => {
-    expect(paths('admin')).toEqual(['/dashboard', '/pedidos', '/historial', '/productos', '/usuarios']);
+    expect(paths('admin')).toEqual([
+      '/dashboard',
+      '/pedidos',
+      '/historial',
+      '/productos',
+      '/usuarios',
+    ]);
   });
 
   it('cajero y empleado ven todo menos usuarios', () => {
